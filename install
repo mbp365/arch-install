@@ -3,8 +3,8 @@
 echo '--------------------------------------------------'
 echo '|                Config Install                  |'
 echo '--------------------------------------------------'
-username="like"
-hostname="E5-576G"
+username="user"
+hostname="HOST"
 
 echo '--------------------------------------------------'
 echo '|              Install Arch Linux                |'
@@ -70,7 +70,7 @@ echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
 echo ">> Установка"
-arch-chroot /mnt sh -c "$(curl -fsSL https://like913.github.io/scripts/chroot)" $username $hostname
+arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname
 
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
