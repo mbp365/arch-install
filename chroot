@@ -124,9 +124,9 @@ echo '>> Установка sddm'
 pacman -Sy sddm sddm-kcm --noconfirm
 systemctl enable sddm
 
-echo '>> Настройка SDDM для nVidia PRIME'
-echo 'xrandr --setprovideroutputsource modesetting NVIDIA-0' >> /usr/share/sddm/scripts/Xsetup
-echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+#echo '>> Настройка SDDM для nVidia PRIME'
+#echo 'xrandr --setprovideroutputsource modesetting NVIDIA-0' >> /usr/share/sddm/scripts/Xsetup
+#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
 
 #echo 'Установка lxdm'
 #pacman -Sy lxdm --noconfirm
@@ -191,14 +191,14 @@ echo '>> Установка Firewall'
 pacman -Sy ufw gufw --noconfirm
 systemctl enable ufw.service
 
-echo '>> Установка wine'
-pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
-aur d9vk-bin
-aur dxvk-bin
+#echo '>> Установка wine'
+#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
+#aur d9vk-bin
+#aur dxvk-bin
 #winecfg
 #setup_d9vk install
 #setup_dxvk install
-pacman -Sy vkd3d lib32-vkd3d --noconfirm
+#pacman -Sy vkd3d lib32-vkd3d --noconfirm
 
 echo '>> Установка firefox'
 pacman -Sy firefox firefox-i18n-ru --noconfirm
