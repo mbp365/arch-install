@@ -4,6 +4,9 @@ username=$0
 hostname=$1
 
 # Функция установки из aur
+
+#Входящие параметры $1 наименование пакета
+
 function aur {
 cd /tmp
 git clone https://aur.archlinux.org/$1.git
@@ -191,14 +194,14 @@ echo '>> Установка Firewall'
 pacman -Sy ufw gufw --noconfirm
 systemctl enable ufw.service
 
-echo '>> Установка wine'
-pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
-aur d9vk-bin
-aur dxvk-bin
+#echo '>> Установка wine'
+#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
+#aur d9vk-bin
+#aur dxvk-bin
 #winecfg
 #setup_d9vk install
 #setup_dxvk install
-pacman -Sy vkd3d lib32-vkd3d --noconfirm
+#pacman -Sy vkd3d lib32-vkd3d --noconfirm
 
 echo '>> Установка firefox'
 pacman -Sy firefox firefox-i18n-ru --noconfirm

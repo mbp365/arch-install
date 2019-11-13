@@ -64,7 +64,7 @@ echo ">> Настройка Зеркал"
 reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo '>> Установка Arch GNU'
-pacstrap -i /mnt base base-devel
+pacstrap -i /mnt base base-devel linux linux-firmware
 
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
