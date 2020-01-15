@@ -14,7 +14,7 @@ x86=1
 # efi     - установка и настройка только UEFI загрузчика
 # grub    - установка и настройка grub без UEFI
 # efigrub - установка и настройка grub с поддержкой UEFI
-bootmgr=grub
+bootmgr=efi
 #   Установка поддержки микрокода для процессоров
 # amd, intel
 ucode=intel
@@ -65,14 +65,14 @@ useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
 passwd $username
 
-echo '>> Собираем ядро'
+echo '>> Собираем RAM linux'
 mkinitcpio -p linux
 
 echo '>> Настройка прав администратора'
 echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
-if [[ $x86 == 1 ]]; then
+if (( $x86 == 1 )); then
     echo '>> Разблокировка и обновление x32 библиотек'
     echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
 fi
@@ -133,44 +133,56 @@ case $bootmgr in
           echo 'загрузчик не установлен'
           ;;
 esac
+echo '--------------------------------------------------'
+echo '|            Установка оболочки zsh              |'
+echo '--------------------------------------------------'
+pacman -S zsh zsh-completions --noconfirm
+chsh -s /bin/zsh
+chsh -s /bin/zsh $username
+echo 'source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> /etc/zsh/zshrc
+echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> /etc/zsh/zshrc
 
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
 echo '--------------------------------------------------'
+echo '>> Установка pacaur'
+aur auracle-git
+aur pacaur
 
 echo '>> Установка xorg и mesa'
-pacman -Sy xorg xorg-xinit mesa --noconfirm
+pacman -Sy xorg-server xorg-xinit mesa --noconfirm
 
 mkdir -p /etc/X11/xorg.conf.d
 cd /etc/X11/xorg.conf.d/
 
-#echo 'Тачпад'
-#pacman -Sy xf86-input-synaptics --noconfirm
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/10-synaptics.conf'
+echo 'Тачпад'
+pacman -Sy xf86-input-synaptics --noconfirm
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/10-synaptics.conf'
 
 echo '>> Установка поддержки файловых систем NTFS exFAT'
 pacman -Sy ntfs-3g exfat-utils --noconfirm
 
-#echo '>> Видеокарта'
-#echo 'intel'
-#pacman -Sy xf86-video-intel --noconfirm
+echo '>> Видеокарта'
+echo 'intel'
+pacman -Sy xf86-video-intel --noconfirm
 #wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
-#echo 'Настрока DRM'
-#sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
+echo 'Настрока DRM'
+sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
 
-#echo 'nvidia'
-#pacman -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings --noconfirm
-#echo '>> Настрока DRM nVidia'
-#sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
+echo 'nvidia'
+pacman -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings --noconfirm
+echo '>> Настрока DRM nVidia'
+sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
 ## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
 ## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-nvidia.conf'
+wget 'hhttps://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
 
 #echo 'AMD' #Установка и настройка AMD не тестировалось
 #pacman -Sy xf86-video-amdgpu --noconfirm
 
-echo '>> VirtualBox'
-pacman -Sy virtualbox-guest-utils --noconfirm
+#echo '>> VirtualBox'
+#pacman -Sy virtualbox-guest-utils --noconfirm
+#systemctl enable vboxservice 
 
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
@@ -182,7 +194,8 @@ systemctl enable sddm
 
 #echo '>> Настройка SDDM для nVidia PRIME'
 #echo 'xrandr --setprovideroutputsource modesetting NVIDIA-0' >> /usr/share/sddm/scripts/Xsetup
-#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 #echo 'Установка lxdm'
 #pacman -Sy lxdm --noconfirm
@@ -219,18 +232,17 @@ pacman -Rsnc konqueror kwrite --noconfirm
 echo '--------------------------------------------------'
 echo '|        Установка дополнительного софта         |'
 echo '--------------------------------------------------'
-echo 'PS1="\e[0;31m\u\e[m@\e[1;90m\h\e[m \e[1;97m\W\e[m # "' >> /root/.bashrc
-echo 'PS1="\e[0;34m\u\e[m@\e[1;90m\h\e[m \e[1;97m\W\e[m # "' >> /home/$username/.bashrc
+cd /root/
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
+sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+cd /home/$username/
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 
 echo '>> Настройка папок пользователя'
 pacman -Sy xdg-user-dirs --noconfirm
 
 pacman -Syu
 pacman -Sy git --noconfirm
-
-echo '>> Установка pacaur'
-aur auracle-git
-aur pacaur
 
 #echo '>> Установка микрокода для aic94xx и wd719x'
 #sudo -u $username pacaur -S aic94xx-firmware wd719x-firmware
@@ -268,7 +280,7 @@ pacman -Sy qbittorrent --noconfirm
 
 echo '>> Читалки, просмотр фото, музыки и прочее'
 pacman -Sy neofetch baobab --noconfirm
-pacman -Sy gpicview audacious --noconfirm
+pacman -Sy gwenview elisa --noconfirm
 
 echo '>> Ставим шрифты'
 pacman -Sy ttf-liberation ttf-dejavu --noconfirm

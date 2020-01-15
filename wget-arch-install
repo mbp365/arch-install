@@ -1,4 +1,5 @@
 #!/bin/bash
+#curl -i https://git.io -F "url=https://raw.githubusercontent.com/like913/arch-install/master/wget-arch-install" -F "code=wget-arch-install"
 
 # Загрузка скриптов
 wget https://raw.githubusercontent.com/like913/arch-install/master/install

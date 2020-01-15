@@ -133,10 +133,14 @@ case $bootmgr in
           echo 'загрузчик не установлен'
           ;;
 esac
-
-pacman -S zsh zsh-completions
-chsh -l
-chsh -s '/bin/zsh'
+echo '--------------------------------------------------'
+echo '|            Установка оболочки zsh              |'
+echo '--------------------------------------------------'
+pacman -S zsh zsh-completions --noconfirm
+chsh -s /bin/zsh
+chsh -s /bin/zsh $username
+echo 'source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> /etc/zsh/zshrc
+echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> /etc/zsh/zshrc
 
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
@@ -175,6 +179,7 @@ pacman -Sy ntfs-3g exfat-utils --noconfirm
 
 echo '>> VirtualBox'
 pacman -Sy virtualbox-guest-utils --noconfirm
+systemctl enable vboxservice 
 
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
@@ -227,7 +232,7 @@ echo '--------------------------------------------------'
 cd /root/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
-cd /home/$username/.bashrc
+cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 
 echo '>> Настройка папок пользователя'
@@ -276,7 +281,7 @@ pacman -Sy qbittorrent --noconfirm
 
 echo '>> Читалки, просмотр фото, музыки и прочее'
 pacman -Sy neofetch baobab --noconfirm
-pacman -Sy gpicview audacious --noconfirm
+pacman -Sy gwenview elisa --noconfirm
 
 echo '>> Ставим шрифты'
 pacman -Sy ttf-liberation ttf-dejavu --noconfirm
