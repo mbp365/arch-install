@@ -35,7 +35,7 @@ rm -rf $1
 echo '--------------------------------------------------------------------------------'
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
-pacman -Sy sed --noconfirm
+pacman -Sy sed wget --noconfirm
 
 echo '>> Russification...'
 loadkeys ru
@@ -136,7 +136,7 @@ esac
 echo '--------------------------------------------------'
 echo '|            Установка оболочки zsh              |'
 echo '--------------------------------------------------'
-pacman -S zsh zsh-completions --noconfirm
+pacman -S zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions grml-zsh-config --noconfirm
 chsh -s /bin/zsh
 chsh -s /bin/zsh $username
 echo 'source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> /etc/zsh/zshrc
