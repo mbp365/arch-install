@@ -225,6 +225,7 @@ pacman -Sy phonon-qt5-vlc --noconfirm
 pacman -Sy plasma-meta kdebase packagekit-qt5 --noconfirm
 echo '>  Дополнительный софт для KDE'
 pacman -Sy konsole partitionmanager ark spectacle okular --noconfirm
+pacman -Sy aspell aspell-ru --noconfirm
 pacman -Rsnc konqueror kwrite --noconfirm
 
 echo '>> Bluetooth pulseaudio и alsa поддержка звука'
@@ -289,7 +290,7 @@ pacman -Sy qbittorrent --noconfirm
 
 echo '>> Читалки, просмотр фото, музыки и прочее'
 pacman -Sy neofetch baobab --noconfirm
-pacman -Sy gwenview elisa --noconfirm
+pacman -Sy gwenview audacious --noconfirm
 
 echo '>> Ставим шрифты'
 pacman -Sy ttf-liberation ttf-dejavu --noconfirm
@@ -297,5 +298,5 @@ aur ttf-ms-fonts
 aur ttf-tahoma
 
 echo '>> Отчистка диска'
-pacman -Sycc --noconfirm
+pacman -Scc --noconfirm
 exit
