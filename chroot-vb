@@ -65,14 +65,14 @@ useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
 passwd $username
 
-echo '>> Собираем ядро'
+echo '>> Собираем RAM linux'
 mkinitcpio -p linux
 
 echo '>> Настройка прав администратора'
 echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
-if [[ $x86 == 1 ]]; then
+if (( $x86 == 1 )); then
     echo '>> Разблокировка и обновление x32 библиотек'
     echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
 fi
@@ -134,19 +134,23 @@ case $bootmgr in
           ;;
 esac
 
+pacman -S zsh zsh-completions
+chsh -l
+chsh -s '/bin/zsh'
+
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
 echo '--------------------------------------------------'
 
 echo '>> Установка xorg и mesa'
-pacman -Sy xorg xorg-xinit mesa --noconfirm
+pacman -Sy xorg-server xorg-xinit mesa --noconfirm
 
 mkdir -p /etc/X11/xorg.conf.d
 cd /etc/X11/xorg.conf.d/
 
 #echo 'Тачпад'
 #pacman -Sy xf86-input-synaptics --noconfirm
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/10-synaptics.conf'
+#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/10-synaptics.conf'
 
 echo '>> Установка поддержки файловых систем NTFS exFAT'
 pacman -Sy ntfs-3g exfat-utils --noconfirm
@@ -182,7 +186,8 @@ systemctl enable sddm
 
 #echo '>> Настройка SDDM для nVidia PRIME'
 #echo 'xrandr --setprovideroutputsource modesetting NVIDIA-0' >> /usr/share/sddm/scripts/Xsetup
-#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 #echo 'Установка lxdm'
 #pacman -Sy lxdm --noconfirm
@@ -219,8 +224,11 @@ pacman -Rsnc konqueror kwrite --noconfirm
 echo '--------------------------------------------------'
 echo '|        Установка дополнительного софта         |'
 echo '--------------------------------------------------'
-echo 'PS1="\e[0;31m\u\e[m@\e[1;90m\h\e[m \e[1;97m\W\e[m # "' >> /root/.bashrc
-echo 'PS1="\e[0;34m\u\e[m@\e[1;90m\h\e[m \e[1;97m\W\e[m # "' >> /home/$username/.bashrc
+cd /root/
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
+sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+cd /home/$username/.bashrc
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 
 echo '>> Настройка папок пользователя'
 pacman -Sy xdg-user-dirs --noconfirm
