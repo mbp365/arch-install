@@ -145,15 +145,20 @@ echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlight
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
 echo '--------------------------------------------------'
-echo '>> Установка pacaur'
-aur auracle-git
-aur pacaur
 
 echo '>> Установка xorg и mesa'
 pacman -Sy xorg-server xorg-xinit mesa --noconfirm
-
+pacman
 mkdir -p /etc/X11/xorg.conf.d
 cd /etc/X11/xorg.conf.d/
+case $ucode in
+	intel)
+		pacman -S libva libva-intel-driver --noconfirm
+		;;
+	*)
+		pacman -S libva libva-mesa-driver --noconfirm
+		;;
+esac
 
 echo 'Тачпад'
 pacman -Sy xf86-input-synaptics --noconfirm
@@ -175,7 +180,7 @@ echo '>> Настрока DRM nVidia'
 sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
 ## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
 ## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
-wget 'hhttps://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
 
 #echo 'AMD' #Установка и настройка AMD не тестировалось
 #pacman -Sy xf86-video-amdgpu --noconfirm
@@ -222,9 +227,9 @@ echo '>  Дополнительный софт для KDE'
 pacman -Sy konsole partitionmanager ark spectacle okular --noconfirm
 pacman -Rsnc konqueror kwrite --noconfirm
 
-#echo '>> Bluetooth pulseaudio и alsa поддержка звука'
-#pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
-#systemctl enable bluetooth.service
+echo '>> Bluetooth pulseaudio и alsa поддержка звука'
+pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
+systemctl enable bluetooth.service
 
 #echo 'XFCE'
 #pacman -Sy xfce4 xfce4-goodies --noconfirm
@@ -244,10 +249,14 @@ pacman -Sy xdg-user-dirs --noconfirm
 pacman -Syu
 pacman -Sy git --noconfirm
 
-#echo '>> Установка микрокода для aic94xx и wd719x'
+echo '>> Установка pacaur'
+aur auracle-git
+aur pacaur
+
+echo '>> Установка микрокода для aic94xx и wd719x'
 #sudo -u $username pacaur -S aic94xx-firmware wd719x-firmware
-#aur aic94xx-firmware
-#aur wd719x-firmware
+aur aic94xx-firmware
+aur wd719x-firmware
 
 mkinitcpio -p linux
 
@@ -259,14 +268,14 @@ echo '>> Установка Firewall'
 pacman -Sy ufw gufw --noconfirm
 systemctl enable ufw.service
 
-#echo '>> Установка wine'
-#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
+echo '>> Установка wine'
+pacman -Sy wine wine-mono wine-gecko winetricks --noconfirm
 #aur d9vk-bin
-#aur dxvk-bin
+aur dxvk-bin
 #winecfg
 #setup_d9vk install
 #setup_dxvk install
-#pacman -Sy vkd3d lib32-vkd3d --noconfirm
+pacman -Sy vkd3d lib32-vkd3d --noconfirm
 
 echo '>> Установка firefox'
 pacman -Sy firefox firefox-i18n-ru --noconfirm

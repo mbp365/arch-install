@@ -35,7 +35,7 @@ rm -rf $1
 echo '--------------------------------------------------------------------------------'
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
-pacman -Sy sed --noconfirm
+pacman -Sy sed vim --noconfirm
 
 echo '>> Russification...'
 loadkeys ru
