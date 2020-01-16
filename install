@@ -32,8 +32,9 @@ echo -e "\n"
 echo '--------------------------------------------------'
 echo '|             Форматирование диска               |'
 echo '--------------------------------------------------'
-fdisk -l
+
 #cfdisk -z /dev/sda
+fdisk -l
 
 mkswap /dev/sda1 -L swap
 swapon /dev/sda1
@@ -45,17 +46,9 @@ mkfs.fat -F32 /dev/sda2 -n EFI
 mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
 
-#mkfs.ext4 /dev/sda4 -L soft
-#mkdir -p /mnt/opt
-#mount /dev/sda4 /mnt/opt
-
 mkfs.ext4 /dev/sda4 -L home
 mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
-
-#mkfs.ext4 /dev/sda6 -L public
-#mkdir -p /mnt/mnt/public
-#mount /dev/sda6 /mnt/mnt/public
 
 echo '--------------------------------------------------'
 echo '|             Установка Arch Linux               |'
@@ -64,7 +57,7 @@ echo ">> Настройка Зеркал"
 reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo '>> Установка Arch GNU'
-pacstrap -i /mnt base base-devel linux linux-firmware
+pacstrap -i /mnt base base-devel linux linux-firmware --noconfirm
 
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab

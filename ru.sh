@@ -10,3 +10,7 @@ sed -i 's/#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/g' /etc/locale.gen
 locale-gen
 
 export LANG=ru_RU.UTF-8
+
+echo
+echo -e 'Для завершения руссификации введите'
+echo -e 'export LANG=ru_RU.UTF-8'

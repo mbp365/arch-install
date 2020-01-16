@@ -22,20 +22,21 @@ ucode=intel
 # Функция установки из aur
 #Входящие параметры $1 наименование пакета
 function aur {
-cd /tmp
-git clone https://aur.archlinux.org/$1.git
-chown -R $username:users /tmp/$1
-chown -R $username:users /tmp/$1/PKGBUILD
-cd $1
-sudo -u $username makepkg -si --noconfirm
-cd ..
-rm -rf $1
+	cd /tmp
+	git clone https://aur.archlinux.org/$1.git
+	chown -R $username:users /tmp/$1
+	chown -R $username:users /tmp/$1/PKGBUILD
+	cd $1
+	sudo -u $username makepkg -si --noconfirm
+	cd ..
+	rm -rf $1
 }
 
 echo '--------------------------------------------------------------------------------'
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
 pacman -Sy sed wget --noconfirm
+pacman -S vim vim-plugins --noconfirm
 
 echo '>> Russification...'
 loadkeys ru
@@ -69,69 +70,72 @@ echo '>> Собираем RAM linux'
 mkinitcpio -p linux
 
 echo '>> Настройка прав администратора'
+# Запрашивать пароль при выполненинии sudo
 echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+# Выполнять sudo без запроса пароля
+#echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
 if (( $x86 == 1 )); then
-    echo '>> Разблокировка и обновление x32 библиотек'
-    echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
+	echo '>> Разблокировка и обновление x32 библиотек'
+	echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
 fi
 
 pacman -Sy
 
 echo '>> Установка загрузчика и микрокода'
 case $ucode in
-     intel)
-          echo 'установка микрокода для intel'
-          pacman -Sy intel-ucode --noconfirm
-          ;;
-     amd) 
-          echo 'установка микрокода для amd'
-          pacman -Sy amd-ucode --noconfirm
-          ;;
-     *)
-          echo 'установка микрокода не требуется'
-          ;;
+	intel)
+		echo 'установка микрокода для intel'
+		pacman -Sy intel-ucode --noconfirm
+		;;
+	amd) 
+		echo 'установка микрокода для amd'
+		pacman -Sy amd-ucode --noconfirm
+		;;
+	*)
+		echo 'установка микрокода не требуется'
+		;;
 esac
 
 case $bootmgr in
-     efi)
-          echo 'установка EFI'
-          pacman -Sy efibootmgr --noconfirm
-          bootctl install
-          echo -e 'default arch\ntimeout 0\neditor 1' > /boot/loader/loader.conf
-          echo 'title Arch Linux' > /boot/loader/entries/arch.conf
-          echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
-          case $ucode in
-              intel)
-                  echo 'initrd /intel-ucode.img' >> /boot/loader/entries/arch.conf
-                  ;;
-              amd) 
-                  echo 'initrd /amd-ucode.img' >> /boot/loader/entries/arch.conf
-                  ;;
-              *)
-                  ;;
-          esac
-          echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-          echo 'options root=/dev/sda3 rw' >> /boot/loader/entries/arch.conf          
-          ;;
-     grub) 
-          echo 'установка GRUB'
-          pacman -Sy grub --noconfirm 
-          grub-install /dev/sda
-          grub-mkconfig -o /boot/grub/grub.cfg
-          sed -i 's/set timeout=5/set timeout=0/g' /boot/grub/grub.cfg
-          ;;
-     efigrub)
-          echo 'установка GRUB'
-          pacman -Sy efibootmgr grub --noconfirm 
-          grub-install /dev/sda
-          grub-mkconfig -o /boot/grub/grub.cfg
-          sed -i 's/set timeout=5/set timeout=0/g' /boot/grub/grub.cfg          
-          ;;
-     *)
-          echo 'загрузчик не установлен'
-          ;;
+	efi)
+		echo 'установка EFI'
+		pacman -Sy efibootmgr --noconfirm
+		bootctl install
+		echo -e 'default arch\ntimeout 0\neditor 1' > /boot/loader/loader.conf
+		echo 'title Arch Linux' > /boot/loader/entries/arch.conf
+		echo 'linux /vmlinuz-linux' >> /boot/loader/entries/arch.conf
+		case $ucode in
+			intel)
+				echo 'initrd /intel-ucode.img' >> /boot/loader/entries/arch.conf
+				;;
+			amd) 
+				echo 'initrd /amd-ucode.img' >> /boot/loader/entries/arch.conf
+				;;
+			*)
+				;;
+		esac
+		echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
+		echo 'options root=/dev/sda3 rw' >> /boot/loader/entries/arch.conf          
+		;;
+	grub) 
+		echo 'установка GRUB'
+		pacman -Sy grub --noconfirm 
+		grub-install /dev/sda
+		grub-mkconfig -o /boot/grub/grub.cfg
+		sed -i 's/set timeout=5/set timeout=0/g' /boot/grub/grub.cfg
+		;;
+	efigrub)
+		echo 'установка GRUB'
+		pacman -Sy efibootmgr grub --noconfirm 
+		grub-install /dev/sda
+		grub-mkconfig -o /boot/grub/grub.cfg
+		sed -i 's/set timeout=5/set timeout=0/g' /boot/grub/grub.cfg          
+		;;
+	*)
+		echo 'загрузчик не установлен'
+		;;
 esac
 echo '--------------------------------------------------'
 echo '|            Установка оболочки zsh              |'
@@ -142,13 +146,22 @@ chsh -s /bin/zsh $username
 echo 'source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> /etc/zsh/zshrc
 echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh' >> /etc/zsh/zshrc
 
+cd /root/
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
+sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/root/.zshrc'/g" .zshrc
+sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+
+cd /home/$username/
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
+sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
+
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
 echo '--------------------------------------------------'
 
 echo '>> Установка xorg и mesa'
 pacman -Sy xorg-server xorg-xinit mesa --noconfirm
-pacman
+
 mkdir -p /etc/X11/xorg.conf.d
 cd /etc/X11/xorg.conf.d/
 case $ucode in
@@ -168,26 +181,26 @@ echo '>> Установка поддержки файловых систем NTF
 pacman -Sy ntfs-3g exfat-utils --noconfirm
 
 echo '>> Видеокарта'
-echo 'intel'
+echo '>intel'
 pacman -Sy xf86-video-intel --noconfirm
+## Загрузка готовой конфигурации intel 
 #wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
-echo 'Настрока DRM'
+echo ' Настрока DRM'
 sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
 
-echo 'nvidia'
+echo '>nvidia'
+## Установка nvidia-390xx Для видеокарт серии GeForce 400/500 [NVCx и NVDx] примерно из 2010-2011
+#pacman -Sy nvidia-390xx nvidia-utils-390xx lib32-nvidia-utils-390xx --noconfirm
+## Переключить на дискретную карту nvidia на ноутбуках
+#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia-prime.conf'
+
 pacman -Sy nvidia nvidia-utils lib32-nvidia-utils nvidia-settings --noconfirm
 echo '>> Настрока DRM nVidia'
 sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
+## Настроить nvidia на ноутбуках с использованием PRIME Render Offload
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
 ## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
 ## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
-wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
-
-#echo 'AMD' #Установка и настройка AMD не тестировалось
-#pacman -Sy xf86-video-amdgpu --noconfirm
-
-#echo '>> VirtualBox'
-#pacman -Sy virtualbox-guest-utils --noconfirm
-#systemctl enable vboxservice 
 
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
@@ -197,14 +210,10 @@ echo '>> Установка sddm'
 pacman -Sy sddm sddm-kcm --noconfirm
 systemctl enable sddm
 
-#echo '>> Настройка SDDM для nVidia PRIME'
-#echo 'xrandr --setprovideroutputsource modesetting NVIDIA-0' >> /usr/share/sddm/scripts/Xsetup
-echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
-echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
-
-#echo 'Установка lxdm'
-#pacman -Sy lxdm --noconfirm
-#systemctl enable lxdm
+#echo '>> Настройка SDDM для xrandr'
+#pacman -S xorg-xrandr --noconfirm
+#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+#echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 echo '>> Установка настройки сети'
 pacman -Sy networkmanager --noconfirm
@@ -238,11 +247,6 @@ systemctl enable bluetooth.service
 echo '--------------------------------------------------'
 echo '|        Установка дополнительного софта         |'
 echo '--------------------------------------------------'
-cd /root/
-wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
-sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
-cd /home/$username/
-wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 
 echo '>> Настройка папок пользователя'
 pacman -Sy xdg-user-dirs --noconfirm
@@ -254,10 +258,9 @@ echo '>> Установка pacaur'
 aur auracle-git
 aur pacaur
 
-echo '>> Установка микрокода для aic94xx и wd719x'
-#sudo -u $username pacaur -S aic94xx-firmware wd719x-firmware
-aur aic94xx-firmware
-aur wd719x-firmware
+#echo '>> Установка микрокода для aic94xx и wd719x'
+#aur aic94xx-firmware
+#aur wd719x-firmware
 
 mkinitcpio -p linux
 
@@ -265,21 +268,21 @@ echo '>> Установка octopi'
 aur alpm_octopi_utils
 aur octopi
 
-echo '>> Установка Firewall'
-pacman -Sy ufw gufw --noconfirm
-systemctl enable ufw.service
+#echo '>> Установка Firewall'
+#pacman -Sy ufw gufw --noconfirm
+#systemctl enable ufw.service
 
-echo '>> Установка wine'
-pacman -Sy wine wine-mono wine-gecko winetricks --noconfirm
-#aur d9vk-bin
-aur dxvk-bin
+#echo '>> Установка wine'
+#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
+#aur dxvk-bin
 #winecfg
-#setup_d9vk install
 #setup_dxvk install
-pacman -Sy vkd3d lib32-vkd3d --noconfirm
+#pacman -Sy vkd3d lib32-vkd3d --noconfirm
 
 echo '>> Установка firefox'
 pacman -Sy firefox firefox-i18n-ru --noconfirm
+
+echo '>> Установка почтового клиента'
 pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
 
 echo '>> Установка VLC'
@@ -299,4 +302,5 @@ aur ttf-tahoma
 
 echo '>> Отчистка диска'
 pacman -Scc --noconfirm
+
 exit
