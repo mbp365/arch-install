@@ -5,16 +5,17 @@ echo '|                               Config Install                            
 echo '--------------------------------------------------------------------------------'
 username=$0
 hostname=$1
+pass=$2
 
 #   Разблокировка и обновление x32 библиотек'
 # 1 -установить, 0 -не устанавливать
-x86=1
+x86=0
 
 #   Наcтройка загрузчика
 # efi     - установка и настройка только UEFI загрузчика
 # grub    - установка и настройка grub без UEFI
 # efigrub - установка и настройка grub с поддержкой UEFI
-bootmgr=grub
+bootmgr=efi
 #   Установка поддержки микрокода для процессоров
 # amd, intel
 ucode=intel
@@ -24,7 +25,7 @@ ucode=intel
 function aur {
 	cd /tmp
 	git clone https://aur.archlinux.org/$1.git
-	chown -R $username:users /tmp/$1
+	chown -R $username:users /tmp/$1 < $pass
 	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
 	sudo -u $username makepkg -si --noconfirm
@@ -50,9 +51,16 @@ locale-gen
 echo -e 'LANG=ru_RU.UTF-8' > /etc/locale.conf
 export LANG=ru_RU.UTF-8
 
-echo '>> Настройка времени по UTC'
+echo ">> Синхронизация времени"
 timedatectl set-ntp true
+echo '>> Настройка времени по UTC'
 hwclock --systohc --utc
+#echo ">> Настройка часового пояса"
+# Настройка часового пояса /usr/share/zoneinfo/Регион/Город
+# Список регионов можно посмотреть коммандой
+# ls /usr/share/zoneinfo
+#timedatectl set-timezone Asia/Almaty
+#ln -sf /usr/share/zoneinfo/Asia/Almaty /etc/localtime
 timedatectl status
 
 echo '>> Имя компьютера '$hostname

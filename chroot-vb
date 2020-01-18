@@ -5,6 +5,7 @@ echo '|                               Config Install                            
 echo '--------------------------------------------------------------------------------'
 username=$0
 hostname=$1
+pass=$2
 
 #	Разблокировка и обновление x32 библиотек'
 # 1 -установить, 0 -не устанавливать
@@ -28,7 +29,7 @@ function aur {
 	chown -R $username:users /tmp/$1
 	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
-	sudo -u $username makepkg -si --noconfirm
+	echo $pass | sudo -u $username makepkg -si --noconfirm
 	cd ..
 	rm -rf $1
 }
@@ -51,9 +52,16 @@ locale-gen
 echo -e 'LANG=ru_RU.UTF-8' > /etc/locale.conf
 export LANG=ru_RU.UTF-8
 
-echo '>> Настройка времени по UTC'
+echo ">> Синхронизация времени"
 timedatectl set-ntp true
+echo '>> Настройка времени по UTC'
 hwclock --systohc --utc
+echo ">> Настройка часового пояса"
+# Настройка часового пояса /usr/share/zoneinfo/Регион/Город
+# Список регионов можно посмотреть коммандой
+# ls /usr/share/zoneinfo
+timedatectl set-timezone Asia/Almaty
+#ln -sf /usr/share/zoneinfo/Asia/Almaty /etc/localtime
 timedatectl status
 
 echo '>> Имя компьютера '$hostname
@@ -62,19 +70,19 @@ echo -e '127.0.0.1 localhost\n::1 localhost\n' > /etc/hosts
 
 # Настройка администратора и создание пользователя $username
 echo '>> Пароль root'
-passwd
+echo $pass | passwd
 useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
-passwd $username
+echo $pass | passwd $username
 
 echo '>> Собираем RAM linux'
 mkinitcpio -p linux
 
 echo '>> Настройка прав администратора'
 # Запрашивать пароль при выполненинии sudo
-echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
+#echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 # Выполнять sudo без запроса пароля
-#echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
 if (( $x86 == 1 )); then
@@ -164,11 +172,11 @@ echo '--------------------------------------------------'
 echo '>> Установка xorg и mesa'
 pacman -Sy xorg-server xorg-xinit mesa --noconfirm
 
-mkdir -p /etc/X11/xorg.conf.d
-cd /etc/X11/xorg.conf.d/
+#mkdir -p /etc/X11/xorg.conf.d
+#cd /etc/X11/xorg.conf.d/
 
-echo '>> Установка поддержки файловых систем NTFS exFAT'
-pacman -Sy ntfs-3g exfat-utils --noconfirm
+#echo '>> Установка поддержки файловых систем NTFS exFAT'
+#pacman -Sy ntfs-3g exfat-utils --noconfirm
 
 echo '>> VirtualBox'
 pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
@@ -232,9 +240,9 @@ aur pacaur
 
 mkinitcpio -p linux
 
-echo '>> Установка octopi'
-aur alpm_octopi_utils
-aur octopi
+#echo '>> Установка octopi'
+#aur alpm_octopi_utils
+#aur octopi
 
 #echo '>> Установка Firewall'
 #pacman -Sy ufw gufw --noconfirm
@@ -250,18 +258,18 @@ aur octopi
 echo '>> Установка firefox'
 pacman -Sy firefox firefox-i18n-ru --noconfirm
 
-echo '>> Установка почтового клиента'
-pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
+#echo '>> Установка почтового клиента'
+#pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
 
-echo '>> Установка VLC'
-pacman -Sy vlc cheese --noconfirm
+#echo '>> Установка VLC'
+#pacman -Sy vlc cheese --noconfirm
 
-echo '>> Установка qbittorrent'
-pacman -Sy qbittorrent --noconfirm
+#echo '>> Установка qbittorrent'
+#pacman -Sy qbittorrent --noconfirm
 
-echo '>> Читалки, просмотр фото, музыки и прочее'
+#echo '>> Читалки, просмотр фото, музыки и прочее'
 pacman -Sy neofetch baobab --noconfirm
-pacman -Sy gwenview audacious --noconfirm
+#pacman -Sy gwenview audacious --noconfirm
 
 echo '>> Ставим шрифты'
 pacman -Sy ttf-liberation ttf-dejavu --noconfirm

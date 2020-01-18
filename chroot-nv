@@ -5,6 +5,7 @@ echo '|                               Config Install                            
 echo '--------------------------------------------------------------------------------'
 username=$0
 hostname=$1
+pass=$2
 
 #   Разблокировка и обновление x32 библиотек'
 # 1 -установить, 0 -не устанавливать
@@ -50,9 +51,16 @@ locale-gen
 echo -e 'LANG=ru_RU.UTF-8' > /etc/locale.conf
 export LANG=ru_RU.UTF-8
 
-echo '>> Настройка времени по UTC'
+echo ">> Синхронизация времени"
 timedatectl set-ntp true
+echo '>> Настройка времени по UTC'
 hwclock --systohc --utc
+#echo ">> Настройка часового пояса"
+# Настройка часового пояса /usr/share/zoneinfo/Регион/Город
+# Список регионов можно посмотреть коммандой
+# ls /usr/share/zoneinfo
+#timedatectl set-timezone Asia/Almaty
+#ln -sf /usr/share/zoneinfo/Asia/Almaty /etc/localtime
 timedatectl status
 
 echo '>> Имя компьютера '$hostname

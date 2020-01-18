@@ -3,8 +3,8 @@
 echo '--------------------------------------------------'
 echo '|                Config Install                  |'
 echo '--------------------------------------------------'
-username="user"
-hostname="HOST"
+username='user'
+hostname='VB'
 pass='123'
 
 echo '--------------------------------------------------'
@@ -34,7 +34,7 @@ echo '--------------------------------------------------'
 echo '|             Форматирование диска               |'
 echo '--------------------------------------------------'
 
-#cfdisk -z /dev/sda
+sfdisk -z /dev/sda < vb.dump
 fdisk -l
 
 mkswap /dev/sda1 -L swap
@@ -51,10 +51,6 @@ mkfs.ext4 /dev/sda4 -L home
 mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
 
-#nkfs.ntfs -Q /dev/sda5 -L win
-#mkdir -p /mnt/win
-#mount /dev/sda4 /mnt/mnt/win
-
 echo '--------------------------------------------------'
 echo '|             Установка Arch Linux               |'
 echo '--------------------------------------------------'
@@ -68,7 +64,7 @@ echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
 echo ">> Установка"
-arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname
+arch-chroot /mnt sh -c "$(cat chroot-vb)" $username $hostname $pass
 
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'

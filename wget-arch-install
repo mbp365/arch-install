@@ -3,7 +3,10 @@
 
 # Загрузка скриптов
 wget https://raw.githubusercontent.com/like913/arch-install/master/install
+wget https://raw.githubusercontent.com/like913/arch-install/master/install-vb
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
+wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-vb
+wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
 wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
 
 # Назначение прав на исполнениие кода
