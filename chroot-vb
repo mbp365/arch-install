@@ -38,7 +38,7 @@ echo '--------------------------------------------------------------------------
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
 pacman -Sy sed wget --noconfirm
-pacman -S vim vim-plugins --noconfirm
+pacman -Sy vim vim-plugins --noconfirm
 
 echo '>> Russification...'
 loadkeys ru
@@ -70,10 +70,16 @@ echo -e '127.0.0.1 localhost\n::1 localhost\n' > /etc/hosts
 
 # Настройка администратора и создание пользователя $username
 echo '>> Пароль root'
-echo $pass | passwd
+(
+	echo $pass
+	echo $pass
+	)| passwd
 useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
-echo $pass | passwd $username
+(
+	echo $pass
+	echo $pass
+	) | passwd $username
 
 echo '>> Собираем RAM linux'
 mkinitcpio -p linux

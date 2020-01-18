@@ -34,7 +34,7 @@ echo '--------------------------------------------------'
 echo '|             Форматирование диска               |'
 echo '--------------------------------------------------'
 
-sfdisk -z /dev/sda < vb.dump
+sfdisk /dev/sda < vb.dump
 fdisk -l
 
 mkswap /dev/sda1 -L swap

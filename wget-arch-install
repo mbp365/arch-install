@@ -8,6 +8,7 @@ wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-vb
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
 wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
+wget https://raw.githubusercontent.com/like913/arch-install/master/vb.dump
 
 # Назначение прав на исполнениие кода
 chmod +x ru.sh
