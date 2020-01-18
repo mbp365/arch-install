@@ -12,6 +12,7 @@ echo '|              Install Arch Linux                |'
 echo '--------------------------------------------------'
 echo 'Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------'
+echo "Server = http://mirror.yandex.ru/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 pacman -Sy sed reflector --noconfirm
 
 echo '>> Russification...'
@@ -37,17 +38,17 @@ echo '--------------------------------------------------'
 sfdisk /dev/sda < vb.dump
 fdisk -l
 
-mkswap /dev/sda1 -L swap
+echo 'y' | mkswap /dev/sda1 -L swap
 swapon /dev/sda1
 
-mkfs.ext4 /dev/sda3 -L Arch
+echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
 mount /dev/sda3 /mnt
 
-mkfs.fat -F32 /dev/sda2 -n EFI
+echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
 mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
 
-mkfs.ext4 /dev/sda4 -L home
+echo 'y' | mkfs.ext4 /dev/sda4 -L home
 mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
 
