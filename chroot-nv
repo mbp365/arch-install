@@ -28,7 +28,7 @@ function aur {
 	chown -R $username:users /tmp/$1
 	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
-	sudo -u $username makepkg -si --noconfirm
+	echo $pass | sudo -u $username makepkg -si --noconfirm
 	cd ..
 	rm -rf $1
 }
@@ -69,10 +69,16 @@ echo -e '127.0.0.1 localhost\n::1 localhost\n' > /etc/hosts
 
 # Настройка администратора и создание пользователя $username
 echo '>> Пароль root'
-passwd
+(
+	echo $pass
+	echo $pass
+) | passwd
 useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
-passwd $username
+(
+	echo $pass
+	echo $pass
+) | passwd $username
 
 echo '>> Собираем RAM linux'
 mkinitcpio -p linux
