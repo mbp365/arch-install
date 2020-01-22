@@ -37,25 +37,25 @@ echo '--------------------------------------------------'
 sfdisk /dev/sda < hdd1tlw.dump
 fdisk -l
 
-mkswap /dev/sda1 -L swap
+echo 'y' | mkswap /dev/sda1 -L swap
 swapon /dev/sda1
 
-mkfs.ext4 /dev/sda3 -L Arch
+echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
 mount /dev/sda3 /mnt
 
-mkfs.fat -F32 /dev/sda2 -n EFI
+echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
 mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
 
-mkfs.ext4 /dev/sda5 -L home
+echo 'y' | mkfs.ext4 /dev/sda5 -L home
 mkdir -p /mnt/home
 mount /dev/sda5 /mnt/home
 
-nkfs.ntfs -Q /dev/sda4 -L win
+echo 'y' | nkfs.ntfs -Q /dev/sda4 -L win
 mkdir -p /mnt/mnt/win
 mount /dev/sda4 /mnt/mnt/win
 
-nkfs.ntfs -Q /dev/sda6 -L public
+echo 'y' | nkfs.ntfs -Q /dev/sda6 -L public
 mkdir -p /mnt/mnt/public
 mount /dev/sda6 /mnt/mnt/public
 
