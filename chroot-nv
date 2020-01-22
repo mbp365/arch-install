@@ -16,6 +16,7 @@ x86=1
 # grub    - установка и настройка grub без UEFI
 # efigrub - установка и настройка grub с поддержкой UEFI
 bootmgr=efi
+
 #   Установка поддержки микрокода для процессоров
 # amd, intel
 ucode=intel
@@ -36,8 +37,9 @@ function aur {
 echo '--------------------------------------------------------------------------------'
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
+pacman -Sy git openssh --noconfirm
 pacman -Sy sed wget --noconfirm
-pacman -S vim vim-plugins --noconfirm
+pacman -Sy vim vim-plugins --noconfirm
 
 echo '>> Russification...'
 loadkeys ru
@@ -264,9 +266,7 @@ echo '--------------------------------------------------'
 
 echo '>> Настройка папок пользователя'
 pacman -Sy xdg-user-dirs --noconfirm
-
 pacman -Syu
-pacman -Sy git --noconfirm
 
 echo '>> Установка pacaur'
 aur auracle-git

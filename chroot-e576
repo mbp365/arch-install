@@ -9,7 +9,7 @@ pass=$2
 
 #   Разблокировка и обновление x32 библиотек'
 # 1 -установить, 0 -не устанавливать
-x86=0
+x86=1
 
 #   Наcтройка загрузчика
 # efi     - установка и настройка только UEFI загрузчика
@@ -26,7 +26,7 @@ ucode=intel
 function aur {
 	cd /tmp
 	git clone https://aur.archlinux.org/$1.git
-	chown -R $username:users /tmp/$1 < $pass
+	chown -R $username:users /tmp/$1
 	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
 	echo $pass | sudo -u $username makepkg -si --noconfirm
@@ -70,11 +70,11 @@ echo -e '127.0.0.1 localhost\n::1 localhost\n' > /etc/hosts
 
 # Настройка администратора и создание пользователя $username
 echo '>> Пароль root'
-passwd
 (
 	echo $pass
 	echo $pass
-)| useradd -G wheel -s /bin/bash -m $username
+) | passwd
+useradd -G wheel -s /bin/bash -m $username
 echo '>> Пароль пользователя '$username
 (
 	echo $pass
@@ -132,7 +132,7 @@ case $bootmgr in
 				;;
 		esac
 		echo 'initrd /initramfs-linux.img' >> /boot/loader/entries/arch.conf
-		echo 'options root=/dev/sda3 rw' >> /boot/loader/entries/arch.conf          
+		echo 'options root=/dev/sda3 rw  nvidia-drm.modeset=1' >> /boot/loader/entries/arch.conf          
 		;;
 	grub) 
 		echo 'установка GRUB'
@@ -152,7 +152,6 @@ case $bootmgr in
 		echo 'загрузчик не установлен'
 		;;
 esac
-
 echo '--------------------------------------------------'
 echo '|            Установка оболочки zsh              |'
 echo '--------------------------------------------------'
@@ -165,12 +164,11 @@ echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlight
 cd /root/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/root/.zshrc'/g" .zshrc
-echo "PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f #'" >> .zshrc
+sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
 
 cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
-echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f #'" >> .zshrc
 
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'
@@ -198,30 +196,26 @@ echo '>> Установка поддержки файловых систем NTF
 pacman -Sy ntfs-3g exfat-utils --noconfirm
 
 echo '>> Видеокарта'
-#echo '>intel'
-#pacman -Sy xf86-video-intel --noconfirm
+echo '>intel'
+pacman -Sy xf86-video-intel --noconfirm
 ## Загрузка готовой конфигурации intel 
 #wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
-#echo ' Настрока DRM'
-#sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
+echo ' Настрока DRM'
+sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
 
-#echo '>nvidia'
+echo '>nvidia'
 ## Установка nvidia-390xx Для видеокарт серии GeForce 400/500 [NVCx и NVDx] примерно из 2010-2011
 #pacman -Sy nvidia-390xx nvidia-390xx-utils lib32-nvidia-390xx-utils opencl-nvidia-390xx nvidia-390xx-settings --noconfirm
 ## Переключить на дискретную карту nvidia на ноутбуках
 #wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia-prime.conf'
 
-#pacman -Sy nvidia nvidia-utils lib32-nvidia-utils opencl-nvidia lib32-opencl-nvidia nvidia-settings --noconfirm
-#echo '>> Настрока DRM nVidia'
-#sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
+pacman -Sy nvidia nvidia-utils lib32-nvidia-utils opencl-nvidia lib32-opencl-nvidia nvidia nvidia-prime nvidia-settings --noconfirm
+echo '>> Настрока DRM nVidia'
+sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
 ## Настроить nvidia на ноутбуках с использованием PRIME Render Offload
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
+wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
 ## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
 ## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
-
-#echo '>> VirtualBox'
-#pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
-#systemctl enable vboxservice 
 
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
@@ -231,13 +225,13 @@ echo '>> Установка sddm'
 pacman -Sy sddm sddm-kcm --noconfirm
 systemctl enable sddm
 
-#echo '>> Настройка SDDM для xrandr'
-#pacman -S xorg-xrandr --noconfirm
-#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
-#echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
+echo '>> Настройка SDDM для xrandr'
+pacman -S xorg-xrandr --noconfirm
+echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 echo '>> Установка настройки сети'
-pacman -Sy networkmanager --noconfirm
+pacman -Sy networkmanager samba --noconfirm
 systemctl enable NetworkManager
 
 echo '--------------------------------------------------'
@@ -252,15 +246,15 @@ echo '--------------------------------------------------'
 
 echo '>> KDE Plasma'
 pacman -Sy phonon-qt5-vlc --noconfirm
-pacman -Sy plasma-meta kdebase packagekit-qt5 --noconfirm
+pacman -Sy plasma-meta kdebase packagekit-qt5 kde-gtk-config --noconfirm
 echo '>  Дополнительный софт для KDE'
-pacman -Sy konsole partitionmanager ark spectacle okular --noconfirm
+pacman -Sy konsole partitionmanager ark spectacle okular kcalc --noconfirm
 pacman -Sy aspell aspell-ru --noconfirm
 pacman -Rsnc konqueror kwrite --noconfirm
 
-#echo '>> Bluetooth pulseaudio и alsa поддержка звука'
-#pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
-#systemctl enable bluetooth.service
+echo '>> Bluetooth pulseaudio и alsa поддержка звука'
+pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
+systemctl enable bluetooth.service
 
 #echo 'XFCE'
 #pacman -Sy xfce4 xfce4-goodies --noconfirm
@@ -279,9 +273,9 @@ echo '>> Установка pacaur'
 aur auracle-git
 aur pacaur
 
-#echo '>> Установка микрокода для aic94xx и wd719x'
-#aur aic94xx-firmware
-#aur wd719x-firmware
+echo '>> Установка микрокода для aic94xx и wd719x'
+aur aic94xx-firmware
+aur wd719x-firmware
 
 mkinitcpio -p linux
 
@@ -289,32 +283,53 @@ echo '>> Установка octopi'
 aur alpm_octopi_utils
 aur octopi
 
-#echo '>> Установка Firewall'
-#pacman -Sy ufw gufw --noconfirm
-#systemctl enable ufw.service
+echo '>> Установка Double Commander'
+pacman -S doublecmd-qt5 --noconfirm
 
-#echo '>> Установка wine'
-#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
-#aur dxvk-bin
-#winecfg
-#setup_dxvk install
-#pacman -Sy vkd3d lib32-vkd3d --noconfirm
+echo '>> Установка Firewall'
+pacman -Sy ufw gufw --noconfirm
+systemctl enable ufw.service
+
+echo '>> Установка LibreOffice'
+pacman -Sy libreoffice-fresh libreoffice-fresh-ru --noconfirm
 
 echo '>> Установка firefox'
-pacman -Sy firefox firefox-i18n-ru --noconfirm
+pacman -Sy firefox firefox-i18n-ru flashplugin --noconfirm
 
 echo '>> Установка почтового клиента'
 pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
 
-echo '>> Установка VLC'
-pacman -Sy vlc cheese --noconfirm
+echo '>> Разработка ПО'
+pacman -Sy qtcreator cmake kdevelop --noconfirm
 
-echo '>> Установка qbittorrent'
-pacman -Sy qbittorrent --noconfirm
+echo '>> VirtualBox'
+pacman -S virtualbox virtualbox-ext-vnc virtualbox-sdk virtualbox-guest-iso --noconfirm
+modprobe vboxdrv
 
 echo '>> Читалки, просмотр фото, музыки и прочее'
-pacman -Sy neofetch baobab --noconfirm
-pacman -Sy gwenview audacious --noconfirm
+echo '> Установка программ для обработки с музыки и видео'
+pacman -Sy vlc cheese --noconfirm
+pacman -Sy audacious audacity --noconfirm
+pacman -Sy kdenlive --noconfirm
+
+echo '> Установка программ для обработки графики'
+pacman -Sy gimp --noconfirm
+pacman  -Sy blender --noconfirm
+
+echo '> Установка qbittorrent'
+pacman -Sy qbittorrent --noconfirm
+
+echo '>Прочее'
+pacman -Sy neofetch baobab okteta --noconfirm
+pacman -Sy gwenview --noconfirm
+
+echo '>> Установка wine'
+pacman -Sy mono --noconfirm
+pacman -Sy wine wine-mono wine-gecko winetricks --noconfirm
+aur dxvk-bin
+#winecfg
+#setup_dxvk install
+pacman -Sy vkd3d lib32-vkd3d --noconfirm
 
 echo '>> Ставим шрифты'
 pacman -Sy ttf-liberation ttf-dejavu --noconfirm

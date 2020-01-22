@@ -4,11 +4,16 @@
 # Загрузка скриптов
 wget https://raw.githubusercontent.com/like913/arch-install/master/install
 wget https://raw.githubusercontent.com/like913/arch-install/master/install-vb
+#wget https://raw.githubusercontent.com/like913/arch-install/master/install-e576
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-vb
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
+#wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-e576
 wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
-wget https://raw.githubusercontent.com/like913/arch-install/master/vb.dump
+wget https://raw.githubusercontent.com/like913/arch-install/master/dump/vb.dump
+
+#wget https://raw.githubusercontent.com/like913/arch-install/master/dump/hdd1tl.dump
+#wget https://raw.githubusercontent.com/like913/arch-install/master/dump/hdd1tlw.dump
 
 # Назначение прав на исполнениие кода
 chmod +x ru.sh
