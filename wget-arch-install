@@ -7,7 +7,7 @@ wget https://raw.githubusercontent.com/like913/arch-install/master/install-vb
 #wget https://raw.githubusercontent.com/like913/arch-install/master/install-e576
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
 wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-vb
-wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
+#wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
 #wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-e576
 wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
 wget https://raw.githubusercontent.com/like913/arch-install/master/dump/vb.dump
@@ -19,3 +19,5 @@ wget https://raw.githubusercontent.com/like913/arch-install/master/dump/vb.dump
 chmod +x ru.sh
 chmod +x install
 
+# Запуск руссификации
+sh ./ru.sh
