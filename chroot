@@ -162,11 +162,12 @@ echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlight
 cd /root/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/root/.zshrc'/g" .zshrc
-sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+echo "PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" >> .zshrc
 
 cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
+echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" >> .zshrc
 
 echo '--------------------------------------------------'
 echo '|              Установка драйверов               |'

@@ -1,23 +1,43 @@
 #!/bin/bash
 #curl -i https://git.io -F "url=https://raw.githubusercontent.com/like913/arch-install/master/wget-arch-install" -F "code=wget-arch-install"
 
-# Загрузка скриптов
-wget https://raw.githubusercontent.com/like913/arch-install/master/install
-wget https://raw.githubusercontent.com/like913/arch-install/master/install-vb
-#wget https://raw.githubusercontent.com/like913/arch-install/master/install-e576
-wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
-wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-vb
-#wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-nv
-#wget https://raw.githubusercontent.com/like913/arch-install/master/chroot-e576
 wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
-wget https://raw.githubusercontent.com/like913/arch-install/master/dump/vb.dump
-
-#wget https://raw.githubusercontent.com/like913/arch-install/master/dump/hdd1tl.dump
-#wget https://raw.githubusercontent.com/like913/arch-install/master/dump/hdd1tlw.dump
-
-# Назначение прав на исполнениие кода
-chmod +x ru.sh
-chmod +x install
-
 # Запуск руссификации
 sh ./ru.sh
+
+# Загрузка скриптов
+case $0 in
+	vb)
+		wget https://raw.githubusercontent.com/like913/arch-install/vb/install
+		wget https://raw.githubusercontent.com/like913/arch-install/vb/chroot
+		wget https://raw.githubusercontent.com/like913/arch-install/vb/install.sh
+		;;
+	nv) 
+		wget https://raw.githubusercontent.com/like913/arch-install/e5-576g/install
+		wget https://raw.githubusercontent.com/like913/arch-install/e5-576g/chroot
+		wget https://raw.githubusercontent.com/like913/arch-install/e5-576g/install.sh
+		;;
+	-h)
+		echo 'wget-arch-install [vb|nv]'
+		echo '    Загрузчик скриптов для установки Arch Linux'
+		echo
+		echo '      Поумолчанию загружается универсальная конфигурация'
+		echo 'vb  - Конфигурация для VirtualBox  с диском 40Гб'
+		echo 'nv  - Конфигурация для новых ноутбуков (intel+nvidia) и HDD 1Тб'
+		echo
+		;;
+	*)
+		wget https://raw.githubusercontent.com/like913/arch-install/master/install
+		wget https://raw.githubusercontent.com/like913/arch-install/master/chroot
+		wget https://raw.githubusercontent.com/like913/arch-install/master/install.sh
+		;;
+esac
+
+
+# Назначение прав на исполнениие кода
+chmod +x install
+
+echo
+echo -e 'Для завершения руссификации введите'
+echo -e 'export LANG=ru_RU.UTF-8'
+
