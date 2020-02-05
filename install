@@ -54,29 +54,27 @@ echo ">> Разметка диска"
 #echo 'size=40G,  type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915' | sfdisk -a /dev/sda #/home
 
 echo ">> Форматирование разделов"
-echo 'y' | mkswap /dev/sda1 -L swap
-echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
-echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
-echo 'y' | mkfs.ext4 /dev/sda4 -L home
+#echo 'y' | mkswap /dev/sda1 -L swap
+#echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
+#echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
+#echo 'y' | mkfs.ext4 /dev/sda4 -L home
 #echo 'y' | mkfs.ntfs -Q /dev/sda5 -L win
-
-echo ">> Создание каталогов для точек подключения"
-mkdir -p /mnt/boot
-mkdir -p /mnt/home
-#mkdir -p /mnt/mnt/win
 
 echo ">> Подключение разделов"
 swapon /dev/sda1
 mount /dev/sda3 /mnt
+mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
+mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
+#mkdir -p /mnt/mnt/win
 #mount /dev/sda4 /mnt/mnt/win
 
 echo '--------------------------------------------------'
 echo '|             Установка Arch Linux               |'
 echo '--------------------------------------------------'
-echo ">> Настройка Зеркал"
-reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
+#echo ">> Настройка Зеркал"
+#reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo '>> Установка Arch GNU'
 pacstrap -i /mnt base base-devel linux linux-firmware --noconfirm
@@ -84,11 +82,14 @@ pacstrap -i /mnt base base-devel linux linux-firmware --noconfirm
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
+mkdir -p /mnt/home/$username/
+cp -f install.sh /mnt/home/$username/
+
 echo ">> Установка"
-arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname
+arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
 
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
 echo '--------------------------------------------------'
-#umount -R /mnt/
-#reboot
+umount -R /mnt/
+reboot

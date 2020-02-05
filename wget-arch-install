@@ -36,8 +36,3 @@ esac
 
 # Назначение прав на исполнениие кода
 chmod +x install
-
-echo
-echo -e 'Для завершения руссификации введите'
-echo -e 'export LANG=ru_RU.UTF-8'
-

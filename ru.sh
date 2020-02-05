@@ -11,6 +11,6 @@ locale-gen
 
 export LANG=ru_RU.UTF-8
 
-echo
-echo -e 'Для завершения руссификации введите'
-echo -e 'export LANG=ru_RU.UTF-8'
+#echo
+#echo -e 'Для завершения руссификации введите'
+#echo -e 'export LANG=ru_RU.UTF-8'

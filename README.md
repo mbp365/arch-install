@@ -169,7 +169,7 @@ ucode=intel
 ## 3. Установка
 Запустите скрипт **install**
 ```bash
-install
+./install
 ```
 
 ## Автор:
