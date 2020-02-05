@@ -71,7 +71,7 @@ echo 'y' | mkfs.ntfs -Q /dev/sda4 -L win
 mkdir -p /mnt/mnt/win
 mount /dev/sda4 /mnt/mnt/win
 
-echo 'y' | mkfs.ntfs -Q /dev/sda6 -L public
+echo 'y' | mkfs.ext4 -Q /dev/sda6 -L public
 mkdir -p /mnt/mnt/public
 mount /dev/sda6 /mnt/mnt/public
 
@@ -87,8 +87,10 @@ pacstrap -i /mnt base base-devel linux linux-firmware linux-headers --noconfirm
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
+cp -f install.sh /mnt/root/
+
 echo ">> Установка"
-arch-chroot /mnt sh -c "$(cat chroot-e576)" $username $hostname $pass
+arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
 
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
