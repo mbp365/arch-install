@@ -6,7 +6,7 @@ wget https://raw.githubusercontent.com/like913/arch-install/master/ru.sh
 sh ./ru.sh
 
 # Загрузка скриптов
-case $0 in
+case $1 in
 	vb)
 		wget https://raw.githubusercontent.com/like913/arch-install/vb/install
 		wget https://raw.githubusercontent.com/like913/arch-install/vb/chroot
