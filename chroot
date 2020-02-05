@@ -76,6 +76,9 @@ echo '>> Настройка прав администратора'
 echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 # Выполнять sudo без запроса пароля
 #echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+chown -R $username:users /home/$username/
+
+echo '>>  Настройка pacman'
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
 if (( $x86 == 1 )); then
@@ -149,56 +152,12 @@ echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlight
 cd /root/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/root/.zshrc'/g" .zshrc
-sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+echo "PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
 
 cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
-sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
-
-echo '--------------------------------------------------'
-echo '|              Установка драйверов               |'
-echo '--------------------------------------------------'
-
-echo '>> Установка xorg и mesa'
-pacman -Sy xorg-server xorg-xinit mesa --noconfirm
-
-mkdir -p /etc/X11/xorg.conf.d
-cd /etc/X11/xorg.conf.d/
-
-echo 'Тачпад'
-pacman -Sy xf86-input-synaptics --noconfirm
-wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/10-synaptics.conf'
-
-echo '>> Установка поддержки файловых систем NTFS exFAT'
-pacman -Sy ntfs-3g exfat-utils --noconfirm
-
-echo '>> Видеокарта'
-echo '>intel'
-pacman -Sy xf86-video-intel --noconfirm
-## Загрузка готовой конфигурации intel 
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
-echo ' Настрока DRM'
-sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
-
-echo '>nvidia'
-## Установка nvidia-390xx Для видеокарт серии GeForce 400/500 [NVCx и NVDx] примерно из 2010-2011
-#pacman -Sy nvidia-390xx nvidia-390xx-utils lib32-nvidia-390xx-utils opencl-nvidia-390xx nvidia-390xx-settings --noconfirm
-## Переключить на дискретную карту nvidia на ноутбуках
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia-prime.conf'
-
-pacman -Sy nvidia nvidia-utils lib32-nvidia-utils opencl-nvidia lib32-opencl-nvidia nvidia nvidia-prime nvidia-settings --noconfirm
-echo '>> Настрока DRM nVidia'
-sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
-## Настроить nvidia на ноутбуках с использованием PRIME Render Offload
-wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
-## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
-## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
-
-echo '>> Установка API ускорения видео (VA) для Linux'
-pacman -Sy libva libva-intel-driver --noconfirm # libva-vdpau-driver libva-mesa-driver --noconfirm
-if (( $x86 == 1 )); then
-	pacman -Sy lib32-libva lib32-libva-intel-driver --noconfirm # lib32-libva-vdpau-driver lib32-libva-mesa-driver --noconfirm
-fi
+echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
+chown -R $username:users .zshrc
 
 sudo -u $username sh \root\install.sh $pass
 

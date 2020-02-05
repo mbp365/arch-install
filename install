@@ -49,29 +49,23 @@ echo 'size=256M, type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B' | sfdisk -a /dev/sda
 echo 'size=60G,  type=4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709' | sfdisk -a /dev/sda # /dev/sda3 /
 echo 'size=80G,  type=EBD0A0A2-B9E5-4433-87C0-68B6B72699C7' | sfdisk -a /dev/sda # /dev/sda4 /mnt/win
 echo 'size=89G,  type=933AC7E1-2EB4-4F13-B844-0E14E2AEF915' | sfdisk -a /dev/sda # /dev/sda5 /home
-echo 'size=800G, type=EBD0A0A2-B9E5-4433-87C0-68B6B72699C7' | sfdisk -a /dev/sda # /dev/sda6 /mnt/public
-
-fdisk -l
+echo 'size=800G, type=0FC63DAF-8483-4772-8E79-3D69D8477DE4' | sfdisk -a /dev/sda # /dev/sda6 /mnt/public
 
 echo 'y' | mkswap /dev/sda1 -L swap
-swapon /dev/sda1
-
 echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
-mount /dev/sda3 /mnt
-
 echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
+echo 'y' | mkfs.ext4 /dev/sda5 -L home
+echo 'y' | mkfs.ntfs -Q /dev/sda4 -L win
+echo 'y' | mkfs.ext4 /dev/sda6 -L public
+
+swapon /dev/sda1
+mount /dev/sda3 /mnt
 mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
-
-echo 'y' | mkfs.ext4 /dev/sda5 -L home
 mkdir -p /mnt/home
 mount /dev/sda5 /mnt/home
-
-echo 'y' | mkfs.ntfs -Q /dev/sda4 -L win
 mkdir -p /mnt/mnt/win
 mount /dev/sda4 /mnt/mnt/win
-
-echo 'y' | mkfs.ext4 -Q /dev/sda6 -L public
 mkdir -p /mnt/mnt/public
 mount /dev/sda6 /mnt/mnt/public
 
@@ -87,7 +81,8 @@ pacstrap -i /mnt base base-devel linux linux-firmware linux-headers --noconfirm
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
-cp -f install.sh /mnt/root/
+mkdir -p /mnt/home/$username/
+cp -f install.sh /mnt/home/$username/
 
 echo ">> Установка"
 arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
@@ -95,5 +90,6 @@ arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
 echo '--------------------------------------------------'
-#umount -R /mnt
-#reboot
+rm -rf /mnt/$username/install.sh
+umount -R /mnt
+reboot

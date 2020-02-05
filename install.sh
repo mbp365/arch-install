@@ -3,15 +3,13 @@
 echo '--------------------------------------------------------------------------------'
 echo '|                               Config Install                                 |'
 echo '--------------------------------------------------------------------------------'
-pass=$0
+pass=$1
 
 # Функция установки из aur
 #Входящие параметры $1 наименование пакета
 function aur {
 	cd /tmp
 	git clone https://aur.archlinux.org/$1.git
-	chown -R $username:users /tmp/$1
-	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
 	echo $pass | makepkg -si --noconfirm
 	cd ..
@@ -19,9 +17,60 @@ function aur {
 }
 
 echo '--------------------------------------------------'
+echo '|              Установка драйверов               |'
+echo '--------------------------------------------------'
+
+echo '>> Установка xorg и mesa'
+echo $pass | sudo pacman -Sy xorg-server xorg-xinit mesa --noconfirm
+
+echo $pass | sudo mkdir -p /etc/X11/xorg.conf.d
+cd /etc/X11/xorg.conf.d/
+
+echo 'Тачпад'
+echo $pass | sudo pacman -Sy xf86-input-synaptics --noconfirm
+echo $pass | sudo wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/10-synaptics.conf'
+
+echo '>> Установка поддержки файловых систем NTFS exFAT'
+echo $pass | sudo pacman -Sy ntfs-3g exfat-utils --noconfirm
+
+echo '>> Видеокарта'
+echo '>intel'
+echo $pass | sudo pacman -Sy xf86-video-intel --noconfirm
+## Загрузка готовой конфигурации intel 
+#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
+echo ' Настрока DRM'
+echo $pass | sudo sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
+
+echo '>nvidia'
+## Установка nvidia-390xx Для видеокарт серии GeForce 400/500 [NVCx и NVDx] примерно из 2010-2011
+#echo $pass | sudo pacman -Sy nvidia-390xx nvidia-390xx-utils lib32-nvidia-390xx-utils opencl-nvidia-390xx nvidia-390xx-settings --noconfirm
+## Переключить на дискретную карту nvidia на ноутбуках
+#echo $pass | sudo wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia-prime.conf'
+
+echo $pass | sudo pacman -Sy nvidia nvidia-utils lib32-nvidia-utils opencl-nvidia lib32-opencl-nvidia nvidia nvidia-prime nvidia-settings --noconfirm
+echo '>> Настрока DRM nVidia'
+echo $pass | sudo sed -i 's/MODULES=(/MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm /g' /etc/mkinitcpio.conf
+## Настроить nvidia на ноутбуках с использованием PRIME Render Offload
+echo $pass | sudo wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/X11/20-nvidia.conf'
+## После перезагрузки выполнить sudo nvidia-xconfig для настройки видеокары
+## sudo nvidia-xconfig --prime необходимо для конфигурирования драйвера в совместимом режиме с картой intel
+
+echo '>> Установка API ускорения видео (VA) для Linux'
+echo $pass | sudo pacman -Sy libva libva-intel-driver --noconfirm # libva-vdpau-driver libva-mesa-driver --noconfirm
+echo $pass | sudo pacman -Sy lib32-libva lib32-libva-intel-driver --noconfirm # lib32-libva-vdpau-driver lib32-libva-mesa-driver --noconfirm
+
+echo '>> Установка настройки сети'
+echo $pass | sudo pacman -Sy networkmanager samba --noconfirm
+echo $pass | sudo systemctl enable NetworkManager
+
+echo '>> Bluetooth pulseaudio и alsa поддержка звука'
+echo $pass | sudo pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
+echo $pass | sudo systemctl enable bluetooth.service
+
+echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
 echo '--------------------------------------------------'
-# раскомментировать блок SDDM или LXDM
+
 echo '>> Установка sddm'
 echo $pass | sudo pacman -Sy sddm sddm-kcm --noconfirm
 echo $pass | sudo systemctl enable sddm
@@ -30,10 +79,6 @@ echo '>> Настройка SDDM для xrandr'
 echo $pass | sudo pacman -Sy xorg-xrandr --noconfirm
 echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
 echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
-
-echo '>> Установка настройки сети'
-echo $pass | sudo pacman -Sy networkmanager samba --noconfirm
-echo $pass | sudo systemctl enable NetworkManager
 
 echo '--------------------------------------------------'
 echo '|         Установка Desktop Environment          |'
@@ -52,10 +97,6 @@ echo '>  Дополнительный софт для KDE'
 echo $pass | sudo pacman -Sy konsole partitionmanager ark spectacle okular kcalc --noconfirm
 echo $pass | sudo pacman -Sy aspell aspell-ru --noconfirm
 echo $pass | sudo pacman -Rsnc konqueror kwrite --noconfirm
-
-echo '>> Bluetooth pulseaudio и alsa поддержка звука'
-echo $pass | sudo pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
-echo $pass | sudo systemctl enable bluetooth.service
 
 #echo 'XFCE'
 #echo $pass | sudo pacman -Sy xfce4 xfce4-goodies --noconfirm
@@ -105,7 +146,7 @@ echo $pass | sudo pacman -Sy qtcreator cmake kdevelop --noconfirm
 
 echo '>> VirtualBox'
 echo $pass | sudo pacman -Sy virtualbox virtualbox-ext-vnc virtualbox-sdk virtualbox-guest-iso --noconfirm
-modprobe vboxdrv
+echo $pass | sudo modprobe vboxdrv
 
 echo '>> Читалки, просмотр фото, музыки и прочее'
 echo '> Установка программ для обработки с музыки и видео'
@@ -115,7 +156,7 @@ echo $pass | sudo pacman -Sy kdenlive --noconfirm
 
 echo '> Установка программ для обработки графики'
 echo $pass | sudo pacman -Sy gimp --noconfirm
-echo $pass | sudo pacman  -Sy blender --noconfirm
+echo $pass | sudo pacman -Sy blender --noconfirm
 
 echo '> Установка qbittorrent'
 echo $pass | sudo pacman -Sy qbittorrent --noconfirm
