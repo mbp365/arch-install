@@ -76,7 +76,7 @@ pacstrap -i /mnt base base-devel linux linux-firmware linux-headers --noconfirm
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
-cp -f install.sh /mnt/root/
+cp -f install.sh /mnt/home/$username/
 
 echo ">> Установка"
 arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass

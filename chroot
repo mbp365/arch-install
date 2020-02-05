@@ -175,7 +175,7 @@ echo '>> VirtualBox'
 pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
 systemctl enable vboxservice 
 
-sudo -u $username $(cat /root/install.sh) $pass
+sudo -u $username sh /home/$username/install.sh $pass
 
 echo '>> Отчистка диска'
 pacman -Scc --noconfirm
