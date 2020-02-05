@@ -1,4 +1,4 @@
-#!/bin/bash
+﻿#!/bin/bash
 
 echo '--------------------------------------------------------------------------------'
 echo '|                               Config Install                                 |'
@@ -121,9 +121,9 @@ aur wd719x-firmware
 
 mkinitcpio -p linux
 
-echo '>> Установка octopi'
-aur alpm_octopi_utils
-aur octopi
+#echo '>> Установка octopi'
+#aur alpm_octopi_utils
+#aur octopi
 
 echo '>> Установка Double Commander'
 echo $pass | sudo pacman -Sy doublecmd-qt5 --noconfirm
@@ -138,11 +138,11 @@ echo $pass | sudo pacman -Sy libreoffice-fresh libreoffice-fresh-ru --noconfirm
 echo '>> Установка firefox'
 echo $pass | sudo pacman -Sy firefox firefox-i18n-ru flashplugin --noconfirm
 
-echo '>> Установка почтового клиента'
-echo $pass | sudo pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
+#echo '>> Установка почтового клиента'
+#echo $pass | sudo pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
 
 echo '>> Разработка ПО'
-echo $pass | sudo pacman -Sy qtcreator cmake kdevelop --noconfirm
+echo $pass | sudo pacman -Sy qtcreator cmake --noconfirm
 
 echo '>> VirtualBox'
 echo $pass | sudo pacman -Sy virtualbox virtualbox-ext-vnc virtualbox-sdk virtualbox-guest-iso --noconfirm
