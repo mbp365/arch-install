@@ -33,6 +33,10 @@ echo '>> VirtualBox'
 echo $pass | sudo pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
 echo $pass | sudo systemctl enable vboxservice 
 
+echo '>> Установка и настройки сети'
+echo $pass | sudo pacman -Sy networkmanager --noconfirm
+echo $pass | sudo systemctl enable NetworkManager
+
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
 echo '--------------------------------------------------'
@@ -45,10 +49,6 @@ echo $pass | sudo systemctl enable sddm
 #echo $pass | sudo pacman -Sy xorg-xrandr --noconfirm
 #echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
 #echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
-
-echo '>> Установка настройки сети'
-echo $pass | sudo pacman -Sy networkmanager --noconfirm
-echo $pass | sudo systemctl enable NetworkManager
 
 echo '--------------------------------------------------'
 echo '|         Установка Desktop Environment          |'
