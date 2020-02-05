@@ -158,6 +158,7 @@ cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
 echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
+chown -R $username:users .zshrc
 
 echo '--------------------------------------------------------------------------------'
 echo '|                    Установка пользовательских приложений                     |'
