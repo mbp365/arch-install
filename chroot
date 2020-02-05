@@ -76,6 +76,9 @@ echo '>> Настройка прав администратора'
 #echo '%wheel ALL=(ALL) ALL' >> /etc/sudoers
 # Выполнять sudo без запроса пароля
 echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+chown -R $username:users /home/$username/
+
+echo '>>  Настройка pacman'
 sed -i 's/#Color/Color/g' /etc/pacman.conf
 
 if (( $x86 == 1 )); then
@@ -152,29 +155,17 @@ echo 'source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlight
 cd /root/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/root/.zshrc'/g" .zshrc
-sed -i "s/PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '/g" .zshrc
+echo "PROMPT='%F{red}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
 
 cd /home/$username/
 wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshrc'
 sed -i "s/zstyle :compinstall filename '/home/user/.zshrc'/zstyle :compinstall filename '/home/$username/.zshrc'/g" .zshrc
+echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
+chown -R $username:users .zshrc
 
-echo '--------------------------------------------------'
-echo '|              Установка драйверов               |'
-echo '--------------------------------------------------'
-
-echo '>> Установка xorg и mesa'
-pacman -Sy xorg-server xorg-xinit mesa --noconfirm
-
-#mkdir -p /etc/X11/xorg.conf.d
-#cd /etc/X11/xorg.conf.d/
-
-#echo '>> Установка поддержки файловых систем NTFS exFAT'
-#pacman -Sy ntfs-3g exfat-utils --noconfirm
-
-echo '>> VirtualBox'
-pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
-systemctl enable vboxservice 
-
+echo '--------------------------------------------------------------------------------'
+echo '|                    Установка пользовательских приложений                     |'
+echo '--------------------------------------------------------------------------------'
 sudo -u $username sh /home/$username/install.sh $pass
 
 echo '>> Отчистка диска'

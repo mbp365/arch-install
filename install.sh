@@ -10,14 +10,28 @@ pass=$1
 function aur {
 	cd /tmp
 	git clone https://aur.archlinux.org/$1.git
-	chown -R $username:users /tmp/$1
-	chown -R $username:users /tmp/$1/PKGBUILD
 	cd $1
 	echo $pass | makepkg -si --noconfirm
 	cd ..
 	rm -rf $1
 }
 
+echo '--------------------------------------------------'
+echo '|              Установка драйверов               |'
+echo '--------------------------------------------------'
+
+echo '>> Установка xorg и mesa'
+echo $pass | sudo pacman -Sy xorg-server xorg-xinit mesa --noconfirm
+
+#mkdir -p /etc/X11/xorg.conf.d
+#cd /etc/X11/xorg.conf.d/
+
+#echo '>> Установка поддержки файловых систем NTFS exFAT'
+#pacman -Sy ntfs-3g exfat-utils --noconfirm
+
+echo '>> VirtualBox'
+echo $pass | sudo pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
+echo $pass | sudo systemctl enable vboxservice 
 
 echo '--------------------------------------------------'
 echo '|           Установка Display Manager            |'
@@ -25,7 +39,7 @@ echo '--------------------------------------------------'
 # раскомментировать блок SDDM или LXDM
 echo '>> Установка sddm'
 echo $pass | sudo pacman -Sy sddm sddm-kcm --noconfirm
-systemctl enable sddm
+echo $pass | sudo systemctl enable sddm
 
 #echo '>> Настройка SDDM для xrandr'
 #echo $pass | sudo pacman -Sy xorg-xrandr --noconfirm
@@ -34,7 +48,7 @@ systemctl enable sddm
 
 echo '>> Установка настройки сети'
 echo $pass | sudo pacman -Sy networkmanager --noconfirm
-systemctl enable NetworkManager
+echo $pass | sudo systemctl enable NetworkManager
 
 echo '--------------------------------------------------'
 echo '|         Установка Desktop Environment          |'
@@ -64,7 +78,7 @@ echo '--------------------------------------------------'
 echo '>> Настройка папок пользователя'
 echo $pass | sudo pacman -Sy xdg-user-dirs --noconfirm
 
-echo $pass | sudo pacman -Syu
+echo $pass | sudo pacman -Syu --noconfirm
 echo $pass | sudo pacman -Sy git --noconfirm
 
 echo '>> Установка pacaur'
@@ -75,7 +89,7 @@ aur pacaur
 #aur aic94xx-firmware
 #aur wd719x-firmware
 
-mkinitcpio -p linux
+sudo mkinitcpio -p linux
 
 #echo '>> Установка octopi'
 #aur alpm_octopi_utils
@@ -83,7 +97,7 @@ mkinitcpio -p linux
 
 #echo '>> Установка Firewall'
 #echo $pass | sudo pacman -Sy ufw gufw --noconfirm
-#systemctl enable ufw.service
+#echo $pass | sudo systemctl enable ufw.service
 
 #echo '>> Установка wine'
 #echo $pass | sudo pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm

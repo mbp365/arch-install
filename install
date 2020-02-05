@@ -51,17 +51,16 @@ echo 'size=20G,  type=4F68BCE3-E8CD-4DB1-96E7-FBCAF984B709' | sfdisk -a /dev/sda
 echo 'size=40G,  type=0FC63DAF-8483-4772-8E79-3D69D8477DE4' | sfdisk -a /dev/sda #/home
 
 echo 'y' | mkswap /dev/sda1 -L swap
-swapon /dev/sda1
-
 echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
-mount /dev/sda3 /mnt
-
 echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
-mkdir -p /mnt/boot
-mount /dev/sda2 /mnt/boot
-
 echo 'y' | mkfs.ext4 /dev/sda4 -L home
+
+mkdir -p /mnt/boot
 mkdir -p /mnt/home
+
+swapon /dev/sda1
+mount /dev/sda3 /mnt
+mount /dev/sda2 /mnt/boot
 mount /dev/sda4 /mnt/home
 
 echo '--------------------------------------------------'
