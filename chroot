@@ -159,6 +159,6 @@ wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/.zshr
 echo "PROMPT='%F{blue}%n%f@%F{248}%m%f %F{white}%B%~%b%f # '" >> .zshrc
 chown -R $username:users .zshrc
 
-sudo -u $username sh \root\install.sh $pass
+sudo -u $username sh /home/$username/install.sh $pass
 
 exit

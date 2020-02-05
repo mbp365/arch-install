@@ -90,6 +90,6 @@ arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
 echo '--------------------------------------------------'
-rm -rf /mnt/$username/install.sh
+rm -rf /mnt/home/$username/install.sh
 umount -R /mnt
 reboot
