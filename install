@@ -76,6 +76,7 @@ pacstrap -i /mnt base base-devel linux linux-firmware linux-headers --noconfirm
 echo '>> Hacтройка точек монтирования'
 genfstab -L -p -P /mnt >> /mnt/etc/fstab
 
+mkdir -p /mnt/home/$username/
 cp -f install.sh /mnt/home/$username/
 
 echo ">> Установка"
