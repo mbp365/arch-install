@@ -84,5 +84,5 @@ arch-chroot /mnt sh -c "$(cat chroot)" $username $hostname $pass
 echo '--------------------------------------------------'
 echo '|                 Перезагрузка                   |'
 echo '--------------------------------------------------'
-#umount -R /mnt
-#reboot
+umount -R /mnt
+reboot
