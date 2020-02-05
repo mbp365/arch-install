@@ -21,19 +21,6 @@ bootmgr=efi
 # amd, intel
 ucode=intel
 
-# Функция установки из aur
-#Входящие параметры $1 наименование пакета
-function aur {
-	cd /tmp
-	git clone https://aur.archlinux.org/$1.git
-	chown -R $username:users /tmp/$1
-	chown -R $username:users /tmp/$1/PKGBUILD
-	cd $1
-	echo $pass | sudo -u $username makepkg -si --noconfirm
-	cd ..
-	rm -rf $1
-}
-
 echo '--------------------------------------------------------------------------------'
 echo ' Install Arch Linux '$username'@'$hostname
 echo '--------------------------------------------------------------------------------'
@@ -156,7 +143,7 @@ esac
 echo '--------------------------------------------------'
 echo '|            Установка оболочки zsh              |'
 echo '--------------------------------------------------'
-pacman -S zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions grml-zsh-config --noconfirm
+pacman -Sy zsh zsh-completions zsh-syntax-highlighting zsh-autosuggestions grml-zsh-config --noconfirm
 chsh -s /bin/zsh
 chsh -s /bin/zsh $username
 echo 'source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh' >> /etc/zsh/zshrc
@@ -188,99 +175,7 @@ echo '>> VirtualBox'
 pacman -Sy virtualbox-guest-utils virtualbox-guest-dkms --noconfirm
 systemctl enable vboxservice 
 
-echo '--------------------------------------------------'
-echo '|           Установка Display Manager            |'
-echo '--------------------------------------------------'
-# раскомментировать блок SDDM или LXDM
-echo '>> Установка sddm'
-pacman -Sy sddm sddm-kcm --noconfirm
-systemctl enable sddm
-
-#echo '>> Настройка SDDM для xrandr'
-#pacman -S xorg-xrandr --noconfirm
-#echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
-#echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
-
-echo '>> Установка настройки сети'
-pacman -Sy networkmanager --noconfirm
-systemctl enable NetworkManager
-
-echo '--------------------------------------------------'
-echo '|         Установка Desktop Environment          |'
-echo '--------------------------------------------------'
-#echo '>> Cinnamon'
-#pacman -Sy cinnamon cinnamon-translations --noconfirm
-#pacman -Sy gnomme-terminal
-
-#echo '>> Deepin'
-#pacman -Sy deepin --noconfirm
-
-echo '>> KDE Plasma'
-pacman -Sy phonon-qt5-vlc --noconfirm
-pacman -Sy plasma-meta kdebase packagekit-qt5 --noconfirm
-echo '>  Дополнительный софт для KDE'
-pacman -Sy konsole partitionmanager ark spectacle okular --noconfirm
-pacman -Sy aspell aspell-ru --noconfirm
-pacman -Rsnc konqueror kwrite --noconfirm
-
-#echo 'XFCE'
-#pacman -Sy xfce4 xfce4-goodies --noconfirm
-
-echo '--------------------------------------------------'
-echo '|        Установка дополнительного софта         |'
-echo '--------------------------------------------------'
-
-echo '>> Настройка папок пользователя'
-pacman -Sy xdg-user-dirs --noconfirm
-
-pacman -Syu
-pacman -Sy git --noconfirm
-
-echo '>> Установка pacaur'
-aur auracle-git
-aur pacaur
-
-#echo '>> Установка микрокода для aic94xx и wd719x'
-#aur aic94xx-firmware
-#aur wd719x-firmware
-
-mkinitcpio -p linux
-
-#echo '>> Установка octopi'
-#aur alpm_octopi_utils
-#aur octopi
-
-#echo '>> Установка Firewall'
-#pacman -Sy ufw gufw --noconfirm
-#systemctl enable ufw.service
-
-#echo '>> Установка wine'
-#pacman -Sy wine wine-mono wine_gecko winetricks --noconfirm
-#aur dxvk-bin
-#winecfg
-#setup_dxvk install
-#pacman -Sy vkd3d lib32-vkd3d --noconfirm
-
-echo '>> Установка firefox'
-pacman -Sy firefox firefox-i18n-ru --noconfirm
-
-#echo '>> Установка почтового клиента'
-#pacman -Sy thunderbird thunderbird-i18n-ru --noconfirm
-
-#echo '>> Установка VLC'
-#pacman -Sy vlc cheese --noconfirm
-
-#echo '>> Установка qbittorrent'
-#pacman -Sy qbittorrent --noconfirm
-
-#echo '>> Читалки, просмотр фото, музыки и прочее'
-pacman -Sy neofetch baobab --noconfirm
-#pacman -Sy gwenview audacious --noconfirm
-
-echo '>> Ставим шрифты'
-pacman -Sy ttf-liberation ttf-dejavu --noconfirm
-aur ttf-ms-fonts
-aur ttf-tahoma
+sudo -u $username sh \root\install.sh $pass
 
 echo '>> Отчистка диска'
 pacman -Scc --noconfirm
