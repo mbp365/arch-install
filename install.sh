@@ -24,7 +24,7 @@ echo '--------------------------------------------------'
 # раскомментировать блок SDDM или LXDM
 echo '>> Установка sddm'
 echo $pass | sudo pacman -Sy sddm sddm-kcm --noconfirm
-systemctl enable sddm
+echo $pass | sudo systemctl enable sddm
 
 echo '>> Настройка SDDM для xrandr'
 echo $pass | sudo pacman -Sy xorg-xrandr --noconfirm
@@ -33,7 +33,7 @@ echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 echo '>> Установка настройки сети'
 echo $pass | sudo pacman -Sy networkmanager samba --noconfirm
-systemctl enable NetworkManager
+echo $pass | sudo systemctl enable NetworkManager
 
 echo '--------------------------------------------------'
 echo '|         Установка Desktop Environment          |'
@@ -55,7 +55,7 @@ echo $pass | sudo pacman -Rsnc konqueror kwrite --noconfirm
 
 echo '>> Bluetooth pulseaudio и alsa поддержка звука'
 echo $pass | sudo pacman -Sy bluez bluez-utils bluedevil pulseaudio-bluetooth alsa-utils pulseaudio-equalizer-ladspa --noconfirm
-systemctl enable bluetooth.service
+echo $pass | sudo systemctl enable bluetooth.service
 
 #echo 'XFCE'
 #echo $pass | sudo pacman -Sy xfce4 xfce4-goodies --noconfirm
@@ -89,7 +89,7 @@ echo $pass | sudo pacman -Sy doublecmd-qt5 --noconfirm
 
 echo '>> Установка Firewall'
 echo $pass | sudo pacman -Sy ufw gufw --noconfirm
-systemctl enable ufw.service
+echo $pass | sudo systemctl enable ufw.service
 
 echo '>> Установка LibreOffice'
 echo $pass | sudo pacman -Sy libreoffice-fresh libreoffice-fresh-ru --noconfirm

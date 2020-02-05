@@ -83,8 +83,6 @@ if (( $x86 == 1 )); then
 	echo -e '[multilib]\nInclude = /etc/pacman.d/mirrorlist\n' >> /etc/pacman.conf
 fi
 
-pacman -Sy
-
 echo '>> Установка загрузчика и микрокода'
 case $ucode in
 	intel)
