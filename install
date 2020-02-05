@@ -55,19 +55,18 @@ echo 'y' | mkfs.ext4 /dev/sda3 -L Arch
 echo 'y' | mkfs.fat -F32 /dev/sda2 -n EFI
 echo 'y' | mkfs.ext4 /dev/sda4 -L home
 
-mkdir -p /mnt/boot
-mkdir -p /mnt/home
-
 swapon /dev/sda1
 mount /dev/sda3 /mnt
+mkdir -p /mnt/boot
 mount /dev/sda2 /mnt/boot
+mkdir -p /mnt/home
 mount /dev/sda4 /mnt/home
 
 echo '--------------------------------------------------'
 echo '|             Установка Arch Linux               |'
 echo '--------------------------------------------------'
-echo ">> Настройка Зеркал"
-reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
+#echo ">> Настройка Зеркал"
+#reflector --country Russia --country Kazakhstan --age 12 --sort rate --save /etc/pacman.d/mirrorlist
 
 echo '>> Установка Arch GNU'
 pacstrap -i /mnt base base-devel linux linux-firmware linux-headers --noconfirm
