@@ -17,13 +17,17 @@ case $1 in
 		wget https://raw.githubusercontent.com/like913/arch-install/e5-576g/chroot
 		wget https://raw.githubusercontent.com/like913/arch-install/e5-576g/install.sh
 		;;
+	mount)
+		wget https://raw.githubusercontent.com/like913/arch-install/master/arch-mount.sh
+		;;
 	-h)
 		echo 'wget-arch-install [vb|nv]'
 		echo '    Загрузчик скриптов для установки Arch Linux'
 		echo
-		echo '      Поумолчанию загружается универсальная конфигурация'
-		echo 'vb  - Конфигурация для VirtualBox  с диском 40Гб'
-		echo 'nv  - Конфигурация для новых ноутбуков (intel+nvidia) и HDD 1Тб'
+		echo '        Поумолчанию загружается универсальная конфигурация'
+		echo 'vb    - Конфигурация для VirtualBox  с диском 40Гб'
+		echo 'nv    - Конфигурация для новых ноутбуков (intel+nvidia) и HDD 1Тб'
+		echo 'mount - Подключить разделы'
 		echo
 		;;
 	*)
