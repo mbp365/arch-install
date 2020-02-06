@@ -37,7 +37,7 @@ echo '>> Видеокарта'
 echo '>intel'
 echo $pass | sudo pacman -Sy xf86-video-intel --noconfirm
 ## Загрузка готовой конфигурации intel 
-#wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
+#echo $pass | sudo wget 'https://raw.githubusercontent.com/like913/arch-install/master/config/20-intel.conf'
 echo ' Настрока DRM'
 echo $pass | sudo sed -i 's/MODULES=(/MODULES=(i915 /g' /etc/mkinitcpio.conf
 
@@ -77,8 +77,8 @@ echo $pass | sudo systemctl enable sddm
 
 echo '>> Настройка SDDM для xrandr'
 echo $pass | sudo pacman -Sy xorg-xrandr --noconfirm
-echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
-echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
+echo $pass | sudo echo 'xrandr --auto' >> /usr/share/sddm/scripts/Xsetup
+echo $pass | sudo echo 'xrandr --dpi 75' >> /usr/share/sddm/scripts/Xsetup
 
 echo '--------------------------------------------------'
 echo '|         Установка Desktop Environment          |'
